@@ -4,7 +4,8 @@ using namespace std;
 
 class Expression
 {
-    char operators[7] = {'*', '/', '+', '-', '^', '(', ')'};
+    char mulDivOp[3] = {'*', '/', '^'};
+    char addSubOp[5] = {'*', '/', '+', '-', '^'};
     string infixExp;
     string opStackStatus;
     string postfixExp;
@@ -16,6 +17,7 @@ public:
         cout << "Enter the infix operation to convert to postfix: " << endl;
         cin >> infixExp;
     }
+
     void addBraces()
     {
         infixExp = '(' + infixExp + ')';
@@ -35,16 +37,42 @@ public:
 
     bool isOperator(char character)
     {
+        char operators[7] = {'*', '/', '+', '-', '^', '(', ')'};
         for (int i = 0; i < sizeof(operators); i++)
-        {
             if (operators[i] == character)
-            {
                 return true;
-            }
-        }
+
         return false;
     }
-    void compareOperators(char currentChar)
+
+    bool checkMulDiv(char character)
+    {
+        for (int i = 0; i < sizeof(mulDivOp); i++)
+            if (mulDivOp[i] == character)
+                return true;
+
+        return false;
+    }
+
+    bool checkAddSub(char character)
+    {
+        for (int i = 0; i < sizeof(addSubOp); i++)
+            if (addSubOp[i] == character)
+                return true;
+
+        return false;
+    }
+
+    char popAndPush(char topCharacter)
+    {
+        opStackStatus.pop_back();
+        pushExp(topCharacter);
+        topCharacter = opStackStatus[opStackStatus.length() - 1];
+        return topCharacter;
+    }
+
+    void
+    compareOperators(char currentChar)
     {
         char topChar;
         switch (currentChar)
@@ -58,73 +86,57 @@ public:
         case '*':
             topChar = opStackStatus[opStackStatus.length() - 1];
             if (topChar == '(' || topChar == '+' || topChar == '-')
-            {
                 opStackStatus.push_back(currentChar);
-            }
-            else if (topChar == '/' || topChar == '^' || topChar == '*')
+
+            else if (checkMulDiv(topChar))
             {
-                while (topChar == '/' || topChar == '^')
-                {
-                    opStackStatus.pop_back();
-                    pushExp(topChar);
-                    topChar = opStackStatus[opStackStatus.length() - 1];
-                }
+                while (checkMulDiv(topChar))
+                    topChar = popAndPush(topChar);
+
                 opStackStatus.push_back(currentChar);
             }
             break;
         case '/':
             topChar = opStackStatus[opStackStatus.length() - 1];
             if (topChar == '(' || topChar == '+' || topChar == '-')
-            {
                 opStackStatus.push_back(currentChar);
-            }
-            else if (topChar == '*' || topChar == '^' || topChar == '/')
+
+            else if (checkMulDiv(topChar))
             {
-                while (topChar == '*' || topChar == '^' || topChar == '/')
-                {
-                    opStackStatus.pop_back();
-                    pushExp(topChar);
-                    topChar = opStackStatus[opStackStatus.length() - 1];
-                }
+                while (checkMulDiv(topChar))
+                    topChar = popAndPush(topChar);
+
                 opStackStatus.push_back(currentChar);
             }
             break;
         case '+':
             topChar = opStackStatus[opStackStatus.length() - 1];
             if (topChar == '(')
-            {
                 opStackStatus.push_back(currentChar);
-            }
-            else if (topChar == '/' || topChar == '^' || topChar == '*' || topChar == '-' || topChar == '+')
-            {
 
-                while (topChar == '/' || topChar == '^' || topChar == '*' || topChar == '-' || topChar == '+')
-                {
-                    opStackStatus.pop_back();
-                    pushExp(topChar);
-                    topChar = opStackStatus[opStackStatus.length() - 1];
-                }
+            else if (checkAddSub(topChar))
+            {
+                while (checkAddSub(topChar))
+                    topChar = popAndPush(topChar);
+
                 opStackStatus.push_back(currentChar);
             }
             break;
+
         case '-':
             topChar = opStackStatus[opStackStatus.length() - 1];
             if (topChar == '(')
-            {
                 opStackStatus.push_back(currentChar);
-            }
-            else if (topChar == '/' || topChar == '^' || topChar == '*' || topChar == '+' || topChar == '-')
-            {
 
-                while (topChar == '/' || topChar == '^' || topChar == '*' || topChar == '+' || topChar == '-')
-                {
-                    opStackStatus.pop_back();
-                    pushExp(topChar);
-                    topChar = opStackStatus[opStackStatus.length() - 1];
-                }
+            else if (checkAddSub(topChar))
+            {
+                while (checkAddSub(topChar))
+                    topChar = popAndPush(topChar);
+
                 opStackStatus.push_back(currentChar);
             }
             break;
+
         case ')':
             topChar = opStackStatus[opStackStatus.length() - 1];
             while (topChar != '(')
@@ -134,20 +146,22 @@ public:
                 topChar = opStackStatus[opStackStatus.length() - 1];
             }
             if (topChar == '(')
-            {
                 opStackStatus.pop_back();
-            }
+
             break;
+
         default:
             cout << "not  valid expression";
             exit(0);
             break;
         }
     }
+
     void pushExp(char value)
     {
         postfixExp.push_back(value);
     }
+
     void display()
     {
         cout << "Infix Expression = " << infixExp << endl;
@@ -164,20 +178,16 @@ int main()
 
     for (int i = 0; i < e1.getLength(); i++)
     {
-
         currentChar = e1.getCharacter();
         if (currentChar >= 97 && currentChar <= 122)
-        {
             currentChar -= 32;
-        }
+
         if (currentChar >= 65 && currentChar <= 90)
-        {
             e1.pushExp(currentChar);
-        }
+
         else if (e1.isOperator(currentChar))
-        {
             e1.compareOperators(currentChar);
-        }
+
         else
         {
             cout << "invalid input" << endl;
