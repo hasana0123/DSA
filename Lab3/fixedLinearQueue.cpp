@@ -28,10 +28,9 @@ public:
  
     void shiftDown()
     {
-        for(int i=0;i<rear;i++)
-        {
+        for(int i=0;i<=rear;i++)
             queuevar[i]=queuevar[i+1];
-        }
+
         rear--;
     }
  
@@ -52,7 +51,7 @@ public:
     {
         cout<<"The elements in the queue are: "<<endl;
         cout<<"-----------------------"<<endl;
-        for(int i =head;i<=rear;i++)
+        for(int i =head;i<rear;i++)
          cout<<setw(3)<<i+1<<":"<<queuevar[i]<<endl;
         if(isFull())
             cout<<"Queue is Full"<<endl;
