@@ -35,6 +35,7 @@ int getNode()
         cout << "List is full!" << endl;
         exit(0);
     }
+
     else
     {
         int newNode = availableList;
@@ -94,6 +95,7 @@ int main()
             cin >> nodeAfter;
             if (nodeAfter < 0 || nodeAfter > 3)
                 cout << "Invalid node" << endl;
+                
             else
             {
                 cout << "Enter the data to store ==>";
@@ -112,6 +114,7 @@ int main()
                 deleteAfter(nodeAfter);
 
             break;
+
         case 3:
             display();
             break;
@@ -119,6 +122,7 @@ int main()
         default:
             cout<<"Invalid operation!"<<endl;
             break;
+
         }
         cout<<"Exit? y/n===>";
         cin>>endOption;
