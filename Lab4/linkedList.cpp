@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stddef.h>
 
 using namespace std;
 
@@ -8,122 +9,155 @@ class Node
     Node *next;
 
 public:
-    // bool isEmpty()
-    // {
-    //     if (head == nullptr)
-    //         return true;
-    //     else
-    //         return false;
-    // }
-    void insertFromBeginning(int data)
-    {
-        Node *newNode = new Node;
-        newNode->next = head;
-        newNode->data = data;
-        head = newNode;
-    }
+    friend bool isEmpty();
+    friend void insertFromBeginning(int data);
+    friend void insertFromEnd(int data);
+    friend void insertAfterPos(int pos, int data);
+    friend void deleteFromBeginning();
+    friend void deleteFromEnd();
+    friend void deleteAfterPos(int pos);
+    friend void display();
+};
+Node *head = 0;
 
-    void insertFromEnd(int data)
-    {
-        Node *newNode = new Node;
-        newNode->data = data;
+bool isEmpty()
+{
+    if (head == 0)
+        return true;
 
+    else
+        return false;
+}
+
+void insertFromBeginning(int data)
+{
+    Node *newNode = new Node;
+    newNode->next = head;
+    newNode->data = data;
+    head = newNode;
+}
+
+void insertFromEnd(int data)
+{
+    Node *newNode = new Node;
+    newNode->data = data;
+    if (!isEmpty())
+    {
         Node *temp = head;
-        while (temp->next != nullptr)
+        while (temp->next != 0)
             temp = temp->next;
 
         temp->next = newNode;
-        newNode->next = nullptr;
     }
 
-    void insertAfterPos(int pos, int data)
+    else
+
+        head = newNode;
+    newNode->next = 0;
+}
+
+void insertAfterPos(int pos, int data)
+{
+    if (isEmpty())
+    {
+        if (pos == 0)
+            insertFromBeginning(data);
+
+        else
+            cout << "Cannot insert in given position, list is empty" << endl;
+    }
+    else
     {
         Node *newNode = new Node;
         newNode->data = data;
 
         Node *temp = head;
-        for (int i = 1; i < pos - 1; i++)
+        for (int i = 0; i < pos - 1; i++)
             temp = temp->next;
 
         newNode->next = temp->next;
         temp->next = newNode;
     }
+}
 
-    void deleteFromBeginning()
+void deleteFromBeginning()
+{
+    if (isEmpty())
+        cout << "List is Empty" << endl;
+
+    else
     {
-        // // if (isEmpty())
-        // //     cout << "List is Empty" << endl;
-        // // else
-        // {
         cout << "Deleted value = " << head->data << endl;
         Node *temp = head;
         head = head->next;
         delete temp;
-        // }
     }
+}
 
-    void deleteFromEnd()
+void deleteFromEnd()
+{
+    if (isEmpty())
+        cout << "List is Empty!" << endl;
+
+    else
     {
-        // if (isEmpty())
-        // cout << "List is Empty!" << endl;
-        // else
-        // {
         Node *temp = head;
-        if (temp->next == nullptr) // If only one element in the list
+        if (temp->next == 0) // If only one element in the list
         {
             cout << "Deleted value = " << temp->data << endl;
             delete temp;
-            head = nullptr;
+            head = 0;
         }
         else
         {
-            while (temp->next->next != nullptr)
+            while (temp->next->next != 0)
                 temp = temp->next;
             cout << "Deleted value = " << temp->next->data << endl;
             delete temp->next;
-            temp->next = nullptr;
+            temp->next = 0;
         }
-        // }
     }
+}
 
-    void deleteAfterPos(int pos)
+void deleteAfterPos(int pos)
+{
+    if (isEmpty())
+        cout << "List is Empty!" << endl;
+    else
     {
-        // if (isEmpty())
-        //     cout << "List is Empty!" << endl;
-        // else
-        // {
         Node *temp = head;
+        Node *temp1;
 
-        for (int i = 1; i < pos - 2; i++)
+        for (int i = 0; i <= pos; i++)
             temp = temp->next;
 
         cout << "Deleted value = " << temp->next->data << endl;
-        delete temp->next;
-        temp->next = nullptr;
-        // }
+        temp1 = temp->next;
+        temp->next = temp->next->next;
+        delete temp1;
     }
+}
 
-    void display()
+void display()
+{
+    if (isEmpty())
+        cout << "List is Empty!" << endl;
+
+    else
     {
-        // if (isEmpty())
-        //     cout << "List is Empty!" << endl;
-        // else
-        // {
         Node *temp = head;
         int i = 1;
-        while (temp != nullptr)
+
+        while (temp != 0)
         {
             cout << i++ << "data = " << temp->data << endl;
             temp = temp->next;
         }
-        // }
     }
-};
-Node *head = 0;
+}
 
 int main()
 {
-    Node n1;
 
     int option1, option2, dataToStore, nodeAfter;
     char endOption;
@@ -143,40 +177,45 @@ int main()
             switch (option2)
             {
             case 1:
-                n1.insertFromBeginning(dataToStore);
+                insertFromBeginning(dataToStore);
                 break;
+
             case 2:
-                n1.insertFromEnd(dataToStore);
+                insertFromEnd(dataToStore);
                 break;
 
             case 3:
                 cout << "After which position? ===>";
                 cin >> nodeAfter;
-                n1.insertAfterPos(nodeAfter, dataToStore);
+                insertAfterPos(nodeAfter, dataToStore);
                 break;
+
             default:
                 cout << "Invalid input!" << endl;
                 break;
             }
 
             break;
+
         case 2:
             cout << "Which delete? \n 1:Delete from Beginning 2: Delete from end 3:Delete after position 'p'===>";
             cin >> option2;
             switch (option2)
             {
             case 1:
-                n1.deleteFromBeginning();
+                deleteFromBeginning();
                 break;
+
             case 2:
-                n1.deleteFromEnd();
+                deleteFromEnd();
                 break;
 
             case 3:
                 cout << "After which position? ===>";
                 cin >> nodeAfter;
-                n1.deleteAfterPos(nodeAfter);
+                deleteAfterPos(nodeAfter);
                 break;
+
             default:
                 cout << "Invalid input!" << endl;
                 break;
@@ -184,14 +223,16 @@ int main()
             break;
 
         case 3:
-            n1.display();
+            display();
             break;
+
         default:
             cout << "Invalid Input!" << endl;
             break;
         }
         cout << "Exit? y/n";
         cin >> endOption;
+
     } while (endOption != 'y');
     return 0;
 }
